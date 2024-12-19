@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const wallpaperRoutes = require('./routes/wallpaperRoutes');
+require("dotenv").config();
 
 // 2. Initialize Express App
 const app = express();
@@ -18,7 +19,7 @@ app.use(cors()); // Allow Cross-Origin Requests
 app.use(bodyParser.json()); // Parse JSON Payloads
 
 // 4. Connect to MongoDB Database
-const DB_URI = 'mongodb://127.0.0.1:27017/wallpapersDB'; // Local MongoDB (Replace with Atlas if needed)
+const DB_URI = (process.env.MONGODB_URI); // Local MongoDB (Replace with Atlas if needed)
 mongoose.connect(DB_URI).then(() => console.log('MongoDB Connected')).catch(err => console.log(err));
 
 // 5. Use Routes
@@ -30,6 +31,6 @@ app.get('/', (req, res) => {
 });
 
 // 6. Start the Server
-app.listen(PORT, () => {
+app.listen(process.env.PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
