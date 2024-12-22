@@ -1,22 +1,32 @@
+// Import necessary modules
 const express = require('express');
 const router = express.Router();
-
-// Import the image controller
 const imageController = require('../controllers/imageController');
 
-// Route for uploading image (POST)
-router.post('/upload', imageController.uploadImage);
+// Routes
 
-// Route for fetching all images (GET) with pagination
+// Create a new image
+router.post('/', imageController.createImage);
+
+// Get all images
 router.get('/', imageController.getAllImages);
 
-// Route for searching images by tags or description (GET)
-router.get('/search', imageController.searchImages);
+// Update an image by ID
+router.put('/:id', imageController.updateImageById);
 
-// Route for getting image by ID (GET)
+// Delete an image by ID
+router.delete('/:id', imageController.deleteImageById);
+
+// Fetch images by category
+router.get('/category/:category', imageController.getImagesByCategory);
+
+// Get image by ID
 router.get('/:id', imageController.getImageById);
 
-// Route for deleting image by ID (DELETE)
-router.delete('/:id', imageController.deleteImage);
+// Search images by name or tags
+router.get('/search', imageController.searchImages);
+
+// Paginate images
+router.get('/paginate', imageController.paginateImages);
 
 module.exports = router;

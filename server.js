@@ -5,7 +5,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
-const multer = require('multer'); // Import multer for file uploads
 
 // Import the routes
 const imageRoutes = require('./routes/imageRoutes');
@@ -18,32 +17,6 @@ const app = express();
 app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 app.use(bodyParser.json()); // Parse JSON data
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded data
-
-// Set up multer for file upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Specify folder where images will be stored
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // Add timestamp to filename
-  }
-});
-
-// File filter to allow only certain types of files (optional)
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-    cb(null, true); // Accept jpeg and png
-  } else {
-    cb(new Error('Only jpeg and png files are allowed'), false); // Reject others
-  }
-};
-
-// Set up multer upload middleware with file size limit (optional)
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB file size limit
-}).single('file'); // 'file' is the key in the form-data for the file
 
 // Serve static files for images
 app.use('/images', express.static(path.join(__dirname, 'uploads')));
@@ -59,35 +32,6 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 app.use('/images', imageRoutes); // Routes for image-related operations
 app.use('/users', userRoutes); // Routes for user-related operations
-
-// Image Upload Route
-app.post('/upload', upload, (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
-
-  const { originalname, size, mimetype, path: imageUrl } = req.file;
-
-  // Assuming the Image model is defined to store image details
-  const newImage = new Image({
-    imageName: originalname,
-    imageUrl: imageUrl,
-    size: size,
-    format: mimetype.split('/')[1], // Extract file format (e.g., jpg, png)
-  });
-
-  newImage.save()
-    .then(() => {
-      res.status(201).json({
-        message: 'Image uploaded and data saved successfully',
-        image: newImage,
-      });
-    })
-    .catch((error) => {
-      console.error('Error saving image:', error);
-      res.status(500).json({ error: 'Failed to save image data' });
-    });
-});
 
 // Default route for API
 app.get('/', (req, res) => {
