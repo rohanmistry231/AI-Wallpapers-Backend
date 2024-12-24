@@ -3,6 +3,7 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const helmet = require("helmet"); // Import Helmet
 const mongoose = require('mongoose');
 const path = require('path');
 
@@ -10,11 +11,32 @@ const path = require('path');
 const imageRoutes = require('./routes/imageRoutes');
 const userRoutes = require('./routes/userRoutes');
 
+
 // Create an instance of Express app
 const app = express();
 
+// Configure Helmet to allow Vercel live script
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "default-src": ["'self'"],
+        "script-src": ["'self'", "'unsafe-inline'", "https://vercel.live"],
+        "connect-src": ["'self'", "https://vercel.live"],
+      },
+    },
+  })
+);
+
 // Middleware
-app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
+// CORS configuration
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(bodyParser.json()); // Parse JSON data
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded data
 
