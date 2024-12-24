@@ -1,28 +1,37 @@
+const mongoose = require('mongoose');
 const Image = require('../models/image'); // Import the Image model
 
-// Create a new image entry
 exports.createImage = async (req, res) => {
   try {
-    const { imageName, imageUrl, description, tags, size, format, category, resolution } = req.body;
+    const images = req.body; // Expecting an array of images
 
-    const newImage = new Image({
-      imageName,
-      imageUrl,
-      description,
-      tags,
-      size,
-      format,
-      category,
-      resolution,
-    });
+    // Check if the input is an array
+    if (!Array.isArray(images)) {
+      return res.status(400).json({
+        message: 'Input should be an array of image objects',
+      });
+    }
 
-    const savedImage = await newImage.save();
+    // Validate each image in the array
+    for (const image of images) {
+      const { imageName, imageUrl, downloadUrl, category } = image;
+
+      if (!imageName || !imageUrl || !downloadUrl || !category) {
+        return res.status(400).json({
+          message: 'All fields are required: imageName, imageUrl, downloadUrl, and category',
+          errorData: image,
+        });
+      }
+    }
+
+    // Save all images to the database
+    const savedImages = await Image.insertMany(images);
     res.status(201).json({
-      message: 'Image created successfully',
-      data: savedImage,
+      message: 'Images created successfully',
+      data: savedImages,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error creating image', error: error.message });
+    res.status(500).json({ message: 'Error creating images', error: error.message });
   }
 };
 
@@ -44,7 +53,6 @@ exports.getImageById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Check if the provided ID is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: 'Invalid image ID' });
     }
@@ -121,31 +129,6 @@ exports.getImagesByCategory = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching images by category', error: error.message });
-  }
-};
-
-// Search images by name or tags
-exports.searchImages = async (req, res) => {
-  try {
-    const { query } = req.query;
-
-    const images = await Image.find({
-      $or: [
-        { imageName: { $regex: query, $options: 'i' } },
-        { tags: { $regex: query, $options: 'i' } },
-      ],
-    });
-
-    if (!images.length) {
-      return res.status(404).json({ message: `No images found for search query: ${query}` });
-    }
-
-    res.status(200).json({
-      message: 'Search results fetched successfully',
-      data: images,
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Error searching images', error: error.message });
   }
 };
 

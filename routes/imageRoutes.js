@@ -11,6 +11,9 @@ router.post('/', imageController.createImage);
 // Get all images
 router.get('/', imageController.getAllImages);
 
+// Get image by ID
+router.get('/:id', imageController.getImageById);
+
 // Update an image by ID
 router.put('/:id', imageController.updateImageById);
 
@@ -19,12 +22,6 @@ router.delete('/:id', imageController.deleteImageById);
 
 // Fetch images by category
 router.get('/category/:category', imageController.getImagesByCategory);
-
-// Get image by ID
-router.get('/:id', imageController.getImageById);
-
-// Search images by name or tags
-router.get('/search', imageController.searchImages);
 
 // Paginate images
 router.get('/paginate', imageController.paginateImages);
