@@ -132,25 +132,21 @@ exports.getImagesByCategory = async (req, res) => {
   }
 };
 
-// Paginate images
-exports.paginateImages = async (req, res) => {
+// Fetch list of categories
+exports.getCategories = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
-    const skip = (page - 1) * limit;
+    // Using `distinct` to fetch unique categories from the 'category' field
+    const categories = await Image.distinct('category');
 
-    const images = await Image.find().skip(skip).limit(Number(limit));
-    const total = await Image.countDocuments();
+    if (!categories.length) {
+      return res.status(404).json({ message: 'No categories found' });
+    }
 
     res.status(200).json({
-      message: 'Images paginated successfully',
-      data: images,
-      pagination: {
-        total,
-        page: Number(page),
-        limit: Number(limit),
-      },
+      message: 'Categories fetched successfully',
+      data: categories,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error paginating images', error: error.message });
+    res.status(500).json({ message: 'Error fetching categories', error: error.message });
   }
 };

@@ -23,7 +23,7 @@ router.delete('/:id', imageController.deleteImageById);
 // Fetch images by category
 router.get('/category/:category', imageController.getImagesByCategory);
 
-// Paginate images
-router.get('/paginate', imageController.paginateImages);
+// Route for fetching categories
+router.get('/categories', imageController.getCategories); // New route for fetching categories
 
 module.exports = router;
