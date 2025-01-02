@@ -12,7 +12,7 @@ router.post('/', imageController.createImage);
 router.get('/', imageController.getAllImages);
 
 // Get image by ID
-router.get('/:id', imageController.getImageById);
+router.get('/image/:id', imageController.getImageById);
 
 // Update an image by ID
 router.put('/:id', imageController.updateImageById);
