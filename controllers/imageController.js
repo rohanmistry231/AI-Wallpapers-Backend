@@ -132,21 +132,29 @@ exports.getImagesByCategory = async (req, res) => {
   }
 };
 
-// Fetch list of categories
 exports.getCategories = async (req, res) => {
   try {
-    // Using `distinct` to fetch unique categories from the 'category' field
-    const categories = await Image.distinct('category');
+    // Fetch all images
+    const images = await Image.find({}, 'category'); // Fetch only category field
 
-    if (!categories.length) {
+    // Handle case where no images are found
+    if (!images.length) {
       return res.status(404).json({ message: 'No categories found' });
     }
 
+    // Extract distinct categories manually
+    const categories = [...new Set(images.map((image) => image.category).filter(Boolean))];
+
     res.status(200).json({
-      message: 'Categories fetched successfully',
-      data: categories,
+      success: true,
+      categories,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching categories', error: error.message });
+    console.error('Error fetching categories:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching categories',
+      error: error.message,
+    });
   }
 };
