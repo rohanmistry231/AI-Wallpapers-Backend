@@ -26,7 +26,4 @@ router.get('/category/:category', imageController.getImagesByCategory);
 // Route for fetching categories
 router.get('/categories', imageController.getCategories); // New route for fetching categories
 
-// Fetch image count by category
-router.get('/category/:category/count', imageController.getImageCountByCategory);
-
 module.exports = router;
