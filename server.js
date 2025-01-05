@@ -11,7 +11,6 @@ const path = require('path');
 const imageRoutes = require('./routes/imageRoutes');
 const userRoutes = require('./routes/userRoutes');
 
-
 // Create an instance of Express app
 const app = express();
 
@@ -29,14 +28,26 @@ app.use(
 );
 
 // Middleware
-// CORS configuration
+// CORS configuration with dynamic origin support
 app.use(
   cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      // Allow requests from your frontend domain or any specific origins
+      const allowedOrigins = [
+        'http://localhost:3000', // Frontend local dev
+        'https://own-ai-wallpapers.netlify.app/', // Your production frontend domain
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(bodyParser.json()); // Parse JSON data
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded data
 
