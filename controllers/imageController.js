@@ -158,3 +158,28 @@ exports.getCategories = async (req, res) => {
     });
   }
 };
+
+// Get image count by category
+exports.getImageCountByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+
+    if (!category) {
+      return res.status(400).json({ message: "Category is required" });
+    }
+
+    const count = await Image.countDocuments({ category });
+
+    res.status(200).json({
+      success: true,
+      category,
+      count,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching image count by category",
+      error: error.message,
+    });
+  }
+};
