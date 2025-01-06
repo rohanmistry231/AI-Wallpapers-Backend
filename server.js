@@ -11,7 +11,6 @@ const path = require('path');
 const imageRoutes = require('./routes/imageRoutes');
 const userRoutes = require('./routes/userRoutes');
 
-
 // Create an instance of Express app
 const app = express();
 
@@ -32,11 +31,16 @@ app.use(
 // CORS configuration
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:3000", // Allow requests from local development
+      "https://own-ai-wallpapers.netlify.app/", // 
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // Allow credentials (if needed)
   })
 );
+
 app.use(bodyParser.json()); // Parse JSON data
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded data
 
