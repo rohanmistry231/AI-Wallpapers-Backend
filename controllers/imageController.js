@@ -3,14 +3,10 @@ const Image = require('../models/image'); // Import the Image model
 
 exports.createImage = async (req, res) => {
   try {
-    const images = req.body; // Expecting an array of images
+    const input = req.body; // Could be a single image object or an array of images
 
-    // Check if the input is an array
-    if (!Array.isArray(images)) {
-      return res.status(400).json({
-        message: 'Input should be an array of image objects',
-      });
-    }
+    // Check if the input is an array or a single object
+    const images = Array.isArray(input) ? input : [input];
 
     // Validate each image in the array
     for (const image of images) {
