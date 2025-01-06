@@ -31,10 +31,7 @@ app.use(
 // CORS configuration
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000", // Allow requests from local development
-      "https://own-walls-ai.netlify.app/", // 
-    ],
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true, // Allow credentials (if needed)
