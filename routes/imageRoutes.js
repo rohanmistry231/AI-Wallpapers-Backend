@@ -26,4 +26,7 @@ router.get('/category/:category', imageController.getImagesByCategory);
 // Route for fetching categories
 router.get('/categories', imageController.getCategories); // New route for fetching categories
 
+//Route for fetching random wallpapers
+router.get('/random', imageController.getRandomWallpapers);
+
 module.exports = router;

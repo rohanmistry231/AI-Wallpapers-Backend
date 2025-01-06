@@ -158,3 +158,32 @@ exports.getCategories = async (req, res) => {
     });
   }
 };
+
+exports.getRandomWallpapers = async (req, res) => {
+  try {
+    const { limit = 32 } = req.query; // Default to 32 images if no limit is provided
+
+    // Ensure `limit` is a valid number
+    const validLimit = Math.max(1, Math.min(Number(limit), 100)); // Clamp limit between 1 and 100
+
+    // Fetch random images using MongoDB's aggregation framework
+    const randomImages = await Image.aggregate([{ $sample: { size: validLimit } }]);
+
+    // Handle case where no images are found
+    if (!randomImages.length) {
+      return res.status(404).json({ message: 'No wallpapers found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: randomImages,
+    });
+  } catch (error) {
+    console.error('Error fetching random wallpapers:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching random wallpapers',
+      error: error.message,
+    });
+  }
+};
