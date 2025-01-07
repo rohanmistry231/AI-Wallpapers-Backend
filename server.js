@@ -27,16 +27,16 @@ app.use(
   })
 );
 
-// Middleware
-// CORS configuration
+// CORS configuration - Allow everything
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // Allow credentials (if needed)
+    origin: "*", // Allow all origins
+    methods: "*", // Allow all methods
+    allowedHeaders: "*", // Allow all headers
+    credentials: true, // Allow credentials (optional, depending on your requirements)
   })
 );
+
 
 app.use(bodyParser.json()); // Parse JSON data
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded data
