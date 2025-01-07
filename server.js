@@ -33,7 +33,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000", // Allow requests from local development
-      "https://own-ai-wallpapers.netlify.app/", // 
+      "https://own-walls-ai.netlify.app/", // 
       "https://ai-wallpapers-backend.vercel.app/", // 
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
