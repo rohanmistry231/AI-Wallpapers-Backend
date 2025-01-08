@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Image = require('../models/image'); // Import the Image model
+const mongoose = require("mongoose");
+const Image = require("../models/image"); // Import the Image model
 
 exports.createImage = async (req, res) => {
   try {
@@ -14,7 +14,8 @@ exports.createImage = async (req, res) => {
 
       if (!imageName || !imageUrl || !downloadUrl || !category) {
         return res.status(400).json({
-          message: 'All fields are required: imageName, imageUrl, downloadUrl, and category',
+          message:
+            "All fields are required: imageName, imageUrl, downloadUrl, and category",
           errorData: image,
         });
       }
@@ -23,11 +24,13 @@ exports.createImage = async (req, res) => {
     // Save all images to the database
     const savedImages = await Image.insertMany(images);
     res.status(201).json({
-      message: 'Images created successfully',
+      message: "Images created successfully",
       data: savedImages,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error creating images', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error creating images", error: error.message });
   }
 };
 
@@ -36,11 +39,13 @@ exports.getAllImages = async (req, res) => {
   try {
     const images = await Image.find();
     res.status(200).json({
-      message: 'Images fetched successfully',
+      message: "Images fetched successfully",
       data: images,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching images', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching images", error: error.message });
   }
 };
 
@@ -50,21 +55,23 @@ exports.getImageById = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: 'Invalid image ID' });
+      return res.status(400).json({ message: "Invalid image ID" });
     }
 
     const image = await Image.findById(id);
 
     if (!image) {
-      return res.status(404).json({ message: 'Image not found' });
+      return res.status(404).json({ message: "Image not found" });
     }
 
     res.status(200).json({
-      message: 'Image fetched successfully',
+      message: "Image fetched successfully",
       data: image,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching image by ID', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching image by ID", error: error.message });
   }
 };
 
@@ -74,18 +81,22 @@ exports.updateImageById = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const updatedImage = await Image.findByIdAndUpdate(id, updates, { new: true });
+    const updatedImage = await Image.findByIdAndUpdate(id, updates, {
+      new: true,
+    });
 
     if (!updatedImage) {
-      return res.status(404).json({ message: 'Image not found' });
+      return res.status(404).json({ message: "Image not found" });
     }
 
     res.status(200).json({
-      message: 'Image updated successfully',
+      message: "Image updated successfully",
       data: updatedImage,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating image', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error updating image", error: error.message });
   }
 };
 
@@ -97,15 +108,17 @@ exports.deleteImageById = async (req, res) => {
     const deletedImage = await Image.findByIdAndDelete(id);
 
     if (!deletedImage) {
-      return res.status(404).json({ message: 'Image not found' });
+      return res.status(404).json({ message: "Image not found" });
     }
 
     res.status(200).json({
-      message: 'Image deleted successfully',
+      message: "Image deleted successfully",
       data: deletedImage,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting image', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting image", error: error.message });
   }
 };
 
@@ -116,7 +129,9 @@ exports.getImagesByCategory = async (req, res) => {
     const images = await Image.find({ category });
 
     if (!images.length) {
-      return res.status(404).json({ message: `No images found in category: ${category}` });
+      return res
+        .status(404)
+        .json({ message: `No images found in category: ${category}` });
     }
 
     res.status(200).json({
@@ -124,32 +139,39 @@ exports.getImagesByCategory = async (req, res) => {
       data: images,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching images by category', error: error.message });
+    res
+      .status(500)
+      .json({
+        message: "Error fetching images by category",
+        error: error.message,
+      });
   }
 };
 
 exports.getCategories = async (req, res) => {
   try {
     // Fetch all images
-    const images = await Image.find({}, 'category'); // Fetch only category field
+    const images = await Image.find({}, "category"); // Fetch only category field
 
     // Handle case where no images are found
     if (!images.length) {
-      return res.status(404).json({ message: 'No categories found' });
+      return res.status(404).json({ message: "No categories found" });
     }
 
     // Extract distinct categories manually
-    const categories = [...new Set(images.map((image) => image.category).filter(Boolean))];
+    const categories = [
+      ...new Set(images.map((image) => image.category).filter(Boolean)),
+    ];
 
     res.status(200).json({
       success: true,
       categories,
     });
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error("Error fetching categories:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error while fetching categories',
+      message: "Server error while fetching categories",
       error: error.message,
     });
   }
@@ -163,11 +185,13 @@ exports.getRandomWallpapers = async (req, res) => {
     const validLimit = Math.max(1, Math.min(Number(limit), 100)); // Clamp limit between 1 and 100
 
     // Fetch random images using MongoDB's aggregation framework
-    const randomImages = await Image.aggregate([{ $sample: { size: validLimit } }]);
+    const randomImages = await Image.aggregate([
+      { $sample: { size: validLimit } },
+    ]);
 
     // Handle case where no images are found
     if (!randomImages.length) {
-      return res.status(404).json({ message: 'No wallpapers found' });
+      return res.status(404).json({ message: "No wallpapers found" });
     }
 
     res.status(200).json({
@@ -175,10 +199,10 @@ exports.getRandomWallpapers = async (req, res) => {
       data: randomImages,
     });
   } catch (error) {
-    console.error('Error fetching random wallpapers:', error);
+    console.error("Error fetching random wallpapers:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error while fetching random wallpapers',
+      message: "Server error while fetching random wallpapers",
       error: error.message,
     });
   }
