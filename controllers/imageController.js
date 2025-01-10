@@ -207,3 +207,26 @@ exports.getRandomWallpapers = async (req, res) => {
     });
   }
 };
+
+// Paginate images
+exports.paginateImages = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (page - 1) * limit;
+
+    const images = await Image.find().skip(skip).limit(Number(limit));
+    const total = await Image.countDocuments();
+
+    res.status(200).json({
+      message: 'Images paginated successfully',
+      data: images,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error paginating images', error: error.message });
+  }
+};
